@@ -305,26 +305,7 @@ Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](L
 - [x] Reportes básicos
 - [ ] Módulo de inversiones completo
 - [ ] Exportación de datos
-
-### Versión 1.1
-- [ ] Sincronización en la nube
-- [ ] Aplicación web complementaria
-- [ ] Integración con APIs bancarias
-- [ ] Notificaciones push
-
-### Versión 2.0
-- [ ] Análisis con IA
-- [ ] Predicciones financieras
-- [ ] Recomendaciones personalizadas
-- [ ] Dashboard avanzado
-
-## 🆘 Soporte
-
-- 📧 Email: support@salescommand.com
-- 🐛 Issues: [GitHub Issues](https://github.com/username/sales-command/issues)
-- 📚 Documentación: [Wiki](https://github.com/username/sales-command/wiki)
-- 💬 Discusiones: [GitHub Discussions](https://github.com/username/sales-command/discussions)
-
+- [ ] Actualizacion precios cryptos e inversiones
 ---
 
 > **Sales Command** - Transformando la gestión financiera personal mediante herramientas CLI potentes y fáciles de usar.
