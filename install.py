@@ -5,6 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+
 def run_command(command: str, description: str) -> bool:
     """Ejecutar comando y mostrar resultado."""
     print(f"🔄 {description}...")
@@ -31,14 +32,12 @@ def main():
     print("🚀 Instalación rápida de Sales Command")
     print("=" * 40)
 
-    # Verificar Python
     if sys.version_info < (3, 9):
         print(f"❌ Python {sys.version_info.major}.{sys.version_info.minor} no compatible. Requiere Python 3.9+")
         sys.exit(1)
 
     print(f"✅ Python {sys.version_info.major}.{sys.version_info.minor} detectado")
 
-    # Crear entorno virtual si no existe
     venv_path = Path("venv")
     if not venv_path.exists():
         if not run_command("python -m venv venv", "Creando entorno virtual"):
@@ -46,7 +45,6 @@ def main():
     else:
         print("✅ Entorno virtual ya existe")
 
-    # Detectar sistema operativo para activación
     if sys.platform == "win32":
         pip_cmd = "venv\\Scripts\\pip"
         python_cmd = "venv\\Scripts\\python"
@@ -54,24 +52,19 @@ def main():
         pip_cmd = "venv/bin/pip"
         python_cmd = "venv/bin/python"
 
-    # Actualizar pip
     run_command(f"{python_cmd} -m pip install --upgrade pip", "Actualizando pip")
 
-    # Instalar uv
     if not run_command(f"{pip_cmd} install uv", "Instalando uv"):
         sys.exit(1)
 
-    # Sincronizar dependencias
+
     if not run_command("uv sync --dev", "Instalando dependencias"):
         print("⚠️  Error con uv sync, intentando instalación alternativa...")
-        # Fallback a pip install
         if Path("pyproject.toml").exists():
             run_command(f"{pip_cmd} install -e .", "Instalación con pip")
 
-    # Verificar instalación
     print("\n🔍 Verificando instalación...")
 
-    # Probar importaciones básicas
     try:
         subprocess.run([
             python_cmd, "-c",

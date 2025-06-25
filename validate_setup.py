@@ -2,14 +2,13 @@
 """Validar configuración de VS Code para Python - Sales Command."""
 
 import json
-import subprocess
 import sys
 from pathlib import Path
+
 
 def validate_vscode_setup():
     """Validar que VS Code esté configurado correctamente."""
 
-    # Verificar archivos de configuración
     required_files = [
         ".vscode/settings.json",
         ".vscode/launch.json",
@@ -28,14 +27,12 @@ def validate_vscode_setup():
             print(f"   - {file}")
         return False
 
-    # Verificar configuración de Python
     settings_file = Path(".vscode/settings.json")
     if settings_file.exists():
         try:
             with open(settings_file) as f:
                 settings = json.load(f)
 
-            # Verificar configuraciones críticas
             critical_settings = {
                 "python.analysis.typeCheckingMode": "strict",
                 "ruff.enable": True,
@@ -63,7 +60,6 @@ def validate_vscode_setup():
 def validate_python_environment():
     """Validar entorno Python."""
 
-    # Verificar Python version
     if sys.version_info < (3, 9):
         print(f"❌ Python {sys.version_info.major}.{sys.version_info.minor} no soportado. Requiere Python 3.9+")
         return False
@@ -141,7 +137,6 @@ def validate_sales_command():
 def test_imports():
     """Probar importaciones básicas."""
     try:
-        # Verificar que los módulos principales se pueden importar
         from src.config.settings import get_settings
         from src.database.models import Transaction
 

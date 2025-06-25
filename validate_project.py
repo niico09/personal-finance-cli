@@ -15,7 +15,8 @@ import json
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Dict
+
 
 def check_mark(condition: bool) -> str:
     """Retorna marca de verificación o X según condición."""
@@ -57,21 +58,18 @@ def validate_project_structure() -> bool:
 
     all_valid = True
 
-    # Verificar archivos requeridos
     for file_path in required_files:
         exists = Path(file_path).exists()
         print(f"  {check_mark(exists)} {file_path}")
         if not exists:
             all_valid = False
 
-    # Verificar directorios
     for dir_path in required_dirs:
         exists = Path(dir_path).exists()
         print(f"  {check_mark(exists)} {dir_path}")
         if not exists:
             all_valid = False
 
-    # Verificar configuración VS Code
     print("  📁 Configuración VS Code:")
     for file_path in vscode_files:
         exists = Path(file_path).exists()
@@ -85,11 +83,9 @@ def validate_python_environment() -> bool:
     """Validar entorno Python."""
     print("🐍 Validando entorno Python...")
 
-    # Verificar versión Python
     version_ok = sys.version_info >= (3, 9)
     print(f"  {check_mark(version_ok)} Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")
 
-    # Verificar herramientas críticas
     tools = {
         "ruff": ["ruff", "--version"],
         "mypy": ["mypy", "--version"],
@@ -118,7 +114,7 @@ def validate_vscode_settings() -> bool:
         return False
 
     try:
-        with open(settings_file, 'r', encoding='utf-8') as f:
+        with open(settings_file, encoding='utf-8') as f:
             settings = json.load(f)
 
         required_settings = {
@@ -151,19 +147,17 @@ def validate_dependencies() -> bool:
         print(f"  {check_mark(False)} pyproject.toml no encontrado")
         return False
 
-    # Verificar que las dependencias críticas están instaladas
     try:
-        import typer
+        import pydantic_settings
         import rich
         import sqlalchemy
-        import pydantic_settings
+        import typer
         print(f"  {check_mark(True)} Dependencias principales instaladas")
 
-        # Verificar dependencias dev
         dev_deps_ok = True
         try:
             import pytest
-            import ruff  # type: ignore
+            import ruff
             print(f"  {check_mark(True)} Dependencias de desarrollo instaladas")
         except ImportError:
             print(f"  {check_mark(False)} Dependencias de desarrollo faltantes")
@@ -180,18 +174,16 @@ def validate_database() -> bool:
     print("🗄️  Validando base de datos...")
 
     try:
-        # Verificar que se puede importar la configuración
         from src.database.connection import get_engine
-        from src.database.models import Base, Transaction, Budget, Investment
+        from src.database.models import Base, Budget, Investment, Transaction
 
         print(f"  {check_mark(True)} Modelos de base de datos importables")
 
-        # Verificar que existe el archivo de BD o se puede crear
         db_file = Path("sales_data.db")
         if db_file.exists():
             print(f"  {check_mark(True)} Base de datos existe")
         else:
-            print(f"  ⚠️  Base de datos no existe (se creará automáticamente)")
+            print("  ⚠️  Base de datos no existe (se creará automáticamente)")
 
         return True
 
@@ -204,10 +196,9 @@ def validate_cli_functionality() -> bool:
     print("🖥️  Validando funcionalidad CLI...")
 
     try:
-        # Test básico del CLI
         result = subprocess.run(
             [sys.executable, "-m", "src.main", "--help"],
-            capture_output=True,
+            check=False, capture_output=True,
             text=True,
             timeout=10
         )
@@ -216,7 +207,6 @@ def validate_cli_functionality() -> bool:
         print(f"  {check_mark(cli_works)} CLI principal funcional")
 
         if cli_works:
-            # Test subcomandos
             subcommands = ["transactions", "budgets", "investments", "reports"]
             subcommands_ok = True
 
@@ -224,7 +214,7 @@ def validate_cli_functionality() -> bool:
                 try:
                     result = subprocess.run(
                         [sys.executable, "-m", "src.main", cmd, "--help"],
-                        capture_output=True,
+                        check=False, capture_output=True,
                         text=True,
                         timeout=5
                     )
@@ -251,14 +241,13 @@ def run_tests() -> bool:
     try:
         result = subprocess.run(
             [sys.executable, "-m", "pytest", "tests/", "-v", "--tb=short"],
-            capture_output=True,
+            check=False, capture_output=True,
             text=True,
             timeout=30
         )
 
         tests_passed = result.returncode == 0
 
-        # Extraer estadísticas básicas
         output_lines = result.stdout.split('\n')
         for line in output_lines:
             if "passed" in line and ("failed" in line or "error" in line or "warning" in line):
@@ -311,7 +300,6 @@ def main() -> None:
     print("🔍 VALIDADOR SALES COMMAND - Python Rules 2024-2025")
     print("="*60)
 
-    # Ejecutar todas las validaciones
     validation_results = {
         "Estructura del Proyecto": validate_project_structure(),
         "Entorno Python": validate_python_environment(),
@@ -322,19 +310,17 @@ def main() -> None:
         "Tests": run_tests()
     }
 
-    # Generar resumen
     generate_summary(validation_results)
 
-    # Exit code basado en resultados
     total_passed = sum(validation_results.values())
     total_checks = len(validation_results)
 
     if total_passed == total_checks:
-        sys.exit(0)  # Éxito completo
+        sys.exit(0)
     elif total_passed >= total_checks * 0.8:
-        sys.exit(1)  # Mayormente exitoso pero con problemas menores
+        sys.exit(1)
     else:
-        sys.exit(2)  # Fallos significativos
+        sys.exit(2)
 
 if __name__ == "__main__":
     main()

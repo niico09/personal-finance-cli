@@ -7,7 +7,6 @@ from rich.console import Console
 
 from src.utils.logging import get_logger
 
-# Configurar aplicación principal
 app = typer.Typer(
     name="sales",
     help="💰 Sales Command - Gestión financiera personal completa",
@@ -33,7 +32,6 @@ def summary(
         console.print(f"\n[bold blue]📋 Resumen Financiero - {period.title()}[/bold blue]")
         console.print("=" * 50)
 
-        # Datos de ejemplo por ahora
         console.print("💰 [green]Ingresos:[/green] $3,500.00")
         console.print("💸 [red]Gastos:[/red] $1,250.75")
         console.print("📊 [blue]Balance:[/blue] $2,249.25")
@@ -60,8 +58,7 @@ def add(
 ) -> None:
     """➕ Agregar nueva transacción."""
     try:
-        # Por ahora solo mostramos lo que se agregaría
-        console.print(f"\n[green]✅ Transacción agregada:[/green]")
+        console.print("\n[green]✅ Transacción agregada:[/green]")
         console.print(f"💰 Monto: ${amount:,.2f}")
         console.print(f"📝 Descripción: {description}")
         console.print(f"🏷️ Categoría: {category}")
@@ -85,7 +82,6 @@ def status() -> None:
         console.print("\n[bold blue]🚦 Estado del Sistema[/bold blue]")
         console.print("=" * 30)
 
-        # Verificar configuración
         settings = get_settings()
         console.print(f"[blue]⚙️ Configuración:[/blue] {settings.app_name} v{settings.app_version}")
         console.print(f"[blue]💾 Base de datos:[/blue] {settings.database_url}")
@@ -102,12 +98,12 @@ def status() -> None:
 @app.command()
 def version() -> None:
     """📦 Mostrar información de versión."""
-    from src import __version__, __author__
+    from src import __author__, __version__
 
-    console.print(f"\n[bold blue]📦 Sales Command[/bold blue]")
+    console.print("\n[bold blue]📦 Sales Command[/bold blue]")
     console.print(f"[blue]Versión:[/blue] {__version__}")
     console.print(f"[blue]Autor:[/blue] {__author__}")
-    console.print(f"[blue]Descripción:[/blue] Sistema completo de gestión financiera personal")
+    console.print("[blue]Descripción:[/blue] Sistema completo de gestión financiera personal")
     console.print()
 
 
